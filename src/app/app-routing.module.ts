@@ -5,6 +5,7 @@ import { DisciplinesComponent } from './collections/disciplines/disciplines.comp
 import { DocTypeComponent } from './collections/doc-type/doc-type.component';
 import { FileADocComponent } from './file-adoc/file-adoc.component';
 import { HomeComponent } from './collections/home/home.component';
+import { JobsComponent } from './collections/jobs/jobs.component';
 
 const routes: Routes = [
   {path:'contacts', component: ContactsComponent},
@@ -12,6 +13,7 @@ const routes: Routes = [
   {path:'doctypes', component: DocTypeComponent},
   {path:'home', component:FileADocComponent},
   {path: 'chome', component: HomeComponent},
+  {path: 'jobs', component: JobsComponent},
   {path: '', redirectTo: 'home', pathMatch: 'full'}
 ];
 

@@ -13,6 +13,19 @@ const config = {
   messagingSenderId: "110090761741"
   };
 
+export const AppConfig = {
+  production: false,
+  environment: 'LOCAL',
+  firebase: {
+    apiKey: "AIzaSyDNwo0J-JI5ApQ3lM3XoSm7eRp3ZMQ9W0E",
+    authDomain: "filer-183a7.firebaseapp.com",
+    databaseURL: "https://filer-183a7.firebaseio.com",
+    projectId: "filer-183a7",
+    storageBucket: "filer-183a7.appspot.com",
+    messagingSenderId: "110090761741"
+  }
+};
+
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
@@ -30,8 +43,9 @@ const config = {
 
 export class AppComponent {
   title = 'plaFile3';
-  
-  
+  //PLA-FILEMOD
+  config = config;
+    
   ngOnInit() {
     firebase.initializeApp(config);
     //firebase.firestore().settings(settings);

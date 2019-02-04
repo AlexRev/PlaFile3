@@ -1,3 +1,142 @@
-<p>
-  file-adoc works!
-</p>
+
+<h1>
+    File a Doc!
+  </h1>
+  
+  <div>
+    <form [formGroup]="boardsForm" (ngSubmit)="onFormSubmit(boardsForm.value)">
+        
+
+        <!-- //JOB -->
+        <mat-form-field class="example-full-width">
+        <mat-select formControlName="job_tag" placeholder="Select JOB">
+            <mat-option value="{{item.tag}}" class ="text" *ngFor = "let item of job_items | async">{{item.name}}</mat-option>
+          </mat-select>
+        </mat-form-field>
+        <!-- CONTACT -->
+        <mat-form-field class="example-full-width">
+        <mat-select formControlName="contact_disc_tag" placeholder="Select CONTACT">
+            <mat-option value="{{item.tag}}-{{item.disc_tag}}" class ="text" *ngFor = "let item of contact_disc_items | async">{{item.name}}</mat-option>
+          </mat-select>
+        </mat-form-field>
+        <!-- DOC-TYPE -->
+        <mat-form-field class="example-full-width">
+        <mat-select formControlName="doc_type_tag" placeholder="Select DOC_TYPE">
+            <mat-option value="{{item.tag}}" class ="text" *ngFor = "let item of doc_type_items | async">{{item.name}}</mat-option>
+          </mat-select>
+        </mat-form-field>
+        <!-- DOC NUMBER -->
+        <mat-form-field class="example-full-width">
+            <input matInput placeholder="document number" formControlName="doc_number"
+            [errorStateMatcher]="matcher">
+        <mat-error>
+            <span *ngIf="!boardsForm.get('doc_number').valid && boardsForm.get('doc_number').touched">Please enter a Document Number</span>
+        </mat-error>
+        </mat-form-field>
+        <!-- DOC REVISION -->
+        <mat-form-field class="example-full-width">
+            <input matInput placeholder="revision" formControlName="revision"
+            [errorStateMatcher]="matcher">
+        <mat-error>
+            <span *ngIf="!boardsForm.get('revision').valid && boardsForm.get('revision').touched">Please enter a Revision Number</span>
+        </mat-error>
+        </mat-form-field>
+        <!-- DOCUMENT NAME -->
+        <mat-form-field class="example-full-width">
+            <input matInput placeholder="document name" formControlName="doc_name"
+            [errorStateMatcher]="matcher">
+        <mat-error>
+            <span *ngIf="!boardsForm.get('doc_name').valid && boardsForm.get('doc_name').touched">Please enter Contact tag</span>
+        </mat-error>
+        </mat-form-field>
+        <!-- FILE NAME, constructed from other fields -->
+        <mat-form-field class="example-full-width">
+          <input matInput placeholder="filename" formControlName="filename"
+          [errorStateMatcher]="matcher" [readonly]='true'> 
+        <mat-error>
+            <span *ngIf="!boardsForm.get('filename').valid && boardsForm.get('filename').touched">Please enter filename tag</span>
+        </mat-error>
+        </mat-form-field>
+
+
+      <div class="button-row">
+        <button type="submit"  mat-fab color="primary"><mat-icon>save</mat-icon></button>
+
+        <!-- butotn validator broken needs fixing,button type="submit" [disabled]="!boardsForm.valid" mat-fab color="primary"> -->
+      </div>
+    </form>
+  </div>
+  
+
+
+  
+    <!-- COLLECTION LIST -->
+    <div class="example-container mat-elevation-z8">
+      <table mat-table #table [dataSource]="dataSource">
+    
+        <!--- Note that these columns can be defined in any order.
+              The actual rendered columns are set as a property on the row definition" -->
+        
+        <!-- KEY -->
+        <ng-container matColumnDef="key">
+            <th mat-header-cell *matHeaderCellDef > Key </th>
+            <td mat-cell *matCellDef="let element" class="title-col"> {{element.key}} </td>
+          </ng-container>
+      
+
+        <!-- JOB Column -->
+        <ng-container matColumnDef="job_tag">
+          <th mat-header-cell *matHeaderCellDef > Job </th>
+          <td mat-cell *matCellDef="let element" class="title-col"> {{element.job_tag}} </td>
+        </ng-container>
+    
+        <!-- Contact-Disc Column -->
+        <ng-container matColumnDef="contact_disc_tag">
+          <th mat-header-cell *matHeaderCellDef > Contact </th>
+          <td mat-cell *matCellDef="let element"> {{element.contact_disc_tag}} </td>
+        </ng-container>
+    
+        <!-- DOC TYPE Column -->
+        <ng-container matColumnDef="doc_type_tag">
+          <th mat-header-cell *matHeaderCellDef> Doc Type </th>
+          <td mat-cell *matCellDef="let element"> {{element.doc_type_tag}} </td>
+        </ng-container>
+  
+        <!-- NUMBER COLUMNG -->
+        <ng-container matColumnDef="doc_number">
+          <th mat-header-cell *matHeaderCellDef> Doc Number </th>
+          <td mat-cell *matCellDef="let element"> {{element.doc_number}} </td>
+        </ng-container>
+        
+        <!-- Revision -->
+        <ng-container matColumnDef="revision">
+            <th mat-header-cell *matHeaderCellDef> Revision </th>
+            <td mat-cell *matCellDef="let element"> {{element.revision}} </td>
+          </ng-container>
+
+          <!-- name -->
+          <ng-container matColumnDef="doc_name">
+            <th mat-header-cell *matHeaderCellDef> Document Name </th>
+            <td mat-cell *matCellDef="let element"> {{element.doc_name}} </td>
+          </ng-container>
+          <!-- filename -->
+          <ng-container matColumnDef="filename">
+            <th mat-header-cell *matHeaderCellDef> filename</th>
+            <td mat-cell *matCellDef="let element"> {{element.filename}} </td>
+          </ng-container>
+          <!-- DEL -->
+          <ng-container matColumnDef="del">
+            <th mat-header-cell *matHeaderCellDef> DEL </th>
+            <td mat-cell *matCellDef="let element"><a (click)="deleteDoc(element.key)"> <mat-icon>delete</mat-icon> </a></td>
+          </ng-container>
+    
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns;" ></tr>
+      </table>
+    </div>
+  
+<!--   
+    <ng-container matColumnDef="del">
+        <th mat-header-cell *matHeaderCellDef> DEL </th>
+        <td mat-cell *matCellDef="let element"><a (click)="deleteDoc(element.key)"> <mat-icon>delete</mat-icon> </a></td>
+      </ng-container> -->

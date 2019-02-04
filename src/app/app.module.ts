@@ -11,6 +11,15 @@ import { FileADocComponent } from './file-adoc/file-adoc.component';
 import { HomeComponent } from './collections/home/home.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
+//imports from PLA-FILE
+import { AngularFireModule } from '@angular/fire';
+import { AppConfig } from './app.component'
+
+import { AngularFirestoreModule } from '@angular/fire/firestore';
+import { AngularFireStorageModule } from '@angular/fire/storage';
+import { AngularFireAuthModule } from '@angular/fire/auth';
+
+
 import {
   MatInputModule,
   MatPaginatorModule,
@@ -20,9 +29,12 @@ import {
   MatIconModule,
   MatButtonModule,
   MatCardModule,
-  MatFormFieldModule } from "@angular/material";
+  MatFormFieldModule,
+  MatSelectModule, 
+  MatSelect} from "@angular/material";
 
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { JobsComponent } from './collections/jobs/jobs.component';
 
 @NgModule({
   declarations: [
@@ -32,7 +44,8 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
     DisciplinesComponent,
     DocTypeComponent,
     FileADocComponent,
-    HomeComponent
+    HomeComponent,
+    JobsComponent
   ],
   imports: [
     BrowserModule,
@@ -48,10 +61,16 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
     MatIconModule,
     MatButtonModule,
     MatCardModule,
-    MatFormFieldModule
-    
+    MatFormFieldModule,
+    MatSelectModule,
+    //imports from PLA-FILE
+    AngularFireModule.initializeApp(AppConfig.firebase,'pla-firebase'),
+    AngularFirestoreModule,
+    AngularFireStorageModule,
+    AngularFireAuthModule,
   ],
-  providers: [],
+  providers: [
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

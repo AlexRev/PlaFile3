@@ -2,6 +2,9 @@ import { Component, OnInit } from '@angular/core';
 import { DataSource } from '@angular/cdk/collections';
 import { FsService } from '../../fs.service';
 import { FormControl, FormGroupDirective, FormBuilder, FormGroup, NgForm, Validators } from '@angular/forms';
+import { Observable } from 'rxjs';
+import * as firebase from 'firebase';
+
 
 //UPDATE IN 3 PlACES FOR NEW COLLECTION
 
@@ -63,19 +66,39 @@ deleteDoc(id) {
 
 export class BoardDataSource extends DataSource<any> {
 
-constructor(private fs: FsService) {
-  super()
-}
+  constructor(private fs: FsService) {
+    super()
+  }
 
-connect() {
-  
-  //3. UPDATE AND WRITE NEW GET DATA FUNCTION return this.fs.getContacts();
-  console.log(collection);
-  console.log(fields);
-  return this.fs.getDocTypes();
-}
+  ref = firebase.firestore().collection(collection);
 
-disconnect() {
+//3 Update Field Mapping
 
-}
+  getDocs(): Observable<any> {
+    
+     return new Observable((observer) => {  
+
+      this.ref.onSnapshot((querySnapshot) => {
+        let boards = [];
+        querySnapshot.forEach((doc) => {
+          let data = doc.data();
+          boards.push({
+            key: doc.id,
+            name: data.name,
+            tag: data.tag,
+          });
+        });
+        observer.next(boards);
+      });
+    });
+  }
+
+  connect() {
+    console.log(collection);
+    return this.getDocs();
+  }
+
+  disconnect() {
+
+  }
 }
