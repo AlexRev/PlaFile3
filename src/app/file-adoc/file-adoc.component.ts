@@ -21,7 +21,7 @@ const collection = "DOCUMENTS"
 export class FileADocComponent implements OnInit {
 
  //2. UPDATE DISPLAYED COLUMNS HERE
- displayedColumns = ['job_tag', 'contact_disc_tag', 'doc_type_tag' , 'doc_number', 'revision', 'doc_name', 'filename', 'del'];
+ displayedColumns = ['job_tag' , 'contact' ,'disc_tag', 'doc_type_tag' , 'doc_number', 'revision', 'doc_name', 'filename', 'del'];
   
  dataSource = new BoardDataSource(this.fs);
 
@@ -66,11 +66,18 @@ doc_type_items:Observable<any[]>;
     //  'disc_tag' : [null, Validators.required],
      'job_tag':[null, Validators.required],
      'contact_disc_tag':[null, Validators.required],
+     //these are constructed from the above JSON object
+     'contact':[null, Validators.required],
+     'disc_tag':[null, Validators.required],
+     
      'doc_type_tag':[null, Validators.required],
      'doc_number' :[null, Validators.required],
      'revision' :[null, Validators.required],
      'doc_name':[null, Validators.required],
      'filename':[null, Validators.required],
+     'pathConstructor':[null, Validators.required],
+     'filepath':[null, Validators.required],
+     
    });
     
 //A -- USE THIS OPTION TO OBSERVE SPECIFIC VALUES, eg if one is programatically generated and would create an infinite loop. OPERATORS MERGED TOGETHER, ONLY NEED TO WATCH ONE VAR
@@ -82,15 +89,50 @@ doc_type_items:Observable<any[]>;
     this.boardsForm.get('doc_name').valueChanges,
   );
 
+
+  //ACTIONS TO TAKE PLACE AS USER EDITS FORM
   fieldChanges.subscribe(form => {
     sessionStorage.setItem('form', JSON.stringify(form));
     this.boardsForm.get('filename').setValue(
-      this.boardsForm.get('contact_disc_tag').value + '-' +
+      //GETS MULTIPLE VALUES FROM THIS OPTION SELECTOR WHICH ARE WRITTEN INTO JSON OBJECT
+      JSON.parse(this.boardsForm.get('contact_disc_tag').value).contact + '-' +
+      JSON.parse(this.boardsForm.get('contact_disc_tag').value).disc_tag + '-' +
       this.boardsForm.get('doc_type_tag').value + '-' +
       this.boardsForm.get('doc_number').value + '-' +
       this.boardsForm.get('revision').value + '-' +
       this.boardsForm.get('doc_name').value
     );
+    
+    this.boardsForm.get('contact').setValue(
+      JSON.parse(this.boardsForm.get('contact_disc_tag').value).contact
+    );
+
+    this.boardsForm.get('disc_tag').setValue(
+      JSON.parse(this.boardsForm.get('contact_disc_tag').value).disc_tag 
+    );
+
+    this.boardsForm.get('pathConstructor').setValue(
+      JSON.parse(this.boardsForm.get('contact_disc_tag').value).pathConstructor 
+    );
+    
+    //code from https://github.com/bramstein/url-template?fbclid=IwAR3fXbXJ1K9ZwnXOBkrRMFwpdiGqjlm3NOfGRgSPALvRidwkqIW7TLGoJ48
+    //var require: any;
+    var template = require('url-template');
+
+    //BELOW CODE CALCULATES FILEPATH BUT CRASHES THE APP :(
+    console.log(form);
+    // var formdata = JSON.parse(form);
+    // console.log(formdata);
+    // var FCON1 = template.parse(this.boardsForm.get('pathConstructor').value );
+    // var FCON2 = FCON1.expand(formdata);
+    // // FOR DEBUGGING - working but need to fix require error
+    // console.log("FCON1")
+    // console.log("FCON2 = " + FCON2);
+    // this.boardsForm.get('filepath').setValue(
+    //   FCON2 
+    // );
+
+
   });
 
  };
@@ -154,6 +196,7 @@ export class BoardDataSource extends DataSource<any> {
          let data = doc.data();
          boards.push({
            key: doc.id,
+           contact:data.contact,
            disc_tag: data.disc_tag,
            job_tag: data.job_tag,
            contact_disc_tag: data.contact_disc_tag,

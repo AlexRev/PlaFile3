@@ -20,7 +20,7 @@ const collection = "CONTACTS"
 export class ContactsComponent implements OnInit {
 
  //2. UPDATE DISPLAYED COLUMNS HERE
- displayedColumns = ['name', 'tag', 'disc' , 'del'];
+ displayedColumns = ['name', 'tag', 'disc' ,'pathConstructor', 'del'];
   
  dataSource = new BoardDataSource(this.fs);
 
@@ -34,6 +34,7 @@ disc_items: Observable<any[]>;
  name:string='';
  tag:string='';
  disc_tag:string='';
+ pathConstructor:string='';
 
  
  constructor(db:AngularFirestore, private fs: FsService, private formBuilder: FormBuilder) {
@@ -47,6 +48,7 @@ disc_items: Observable<any[]>;
      'name' : [null, Validators.required],
      'tag' : [null, Validators.required],
      'disc_tag' : [null, Validators.required],
+     'pathConstructor': [null, Validators.required],
    });
    
  }
@@ -96,6 +98,7 @@ export class BoardDataSource extends DataSource<any> {
            name: data.name,
            tag: data.tag,
            disc_tag: data.disc_tag,
+           pathConstructor: data.pathConstructor,
          });
        });
        observer.next(boards);
