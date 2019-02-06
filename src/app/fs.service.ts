@@ -34,6 +34,18 @@ export class FsService {
     });
   }
 
+  filePathCon(template_string, data): Observable<{}> {
+    
+    //1 LOAD STRING TO URL-TEMPALTE CODE
+    var load_string = require('url-template').parse(template_string);
+    //2. SEND FORM VALUE TO URL-TEMPLATE
+    //@ts-ignore
+    var parse_string = load_string.expand(data);
+    //3. SAVE FILE PATH IN FORM
+    return parse_string;
+
+  };
+
 
 }
 

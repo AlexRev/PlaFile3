@@ -46,6 +46,9 @@ doc_type_items:Observable<any[]>;
  revision :string='';
  doc_name:string='';
  filename: string = '';
+
+ //constructor vars:
+ con_filepath: any;
  
  constructor(db:AngularFirestore, private fs: FsService, private formBuilder: FormBuilder) {
   //GET OPTION DATA HERE  
@@ -64,25 +67,25 @@ doc_type_items:Observable<any[]>;
     //  'name' : [null, Validators.required],
     //  'tag' : [null, Validators.required],
     //  'disc_tag' : [null, Validators.required],
-     'job_tag':[null, Validators.required],
-     'contact_disc_tag':[null, Validators.required],
+     'job_tag':['', Validators.required],
+     'contact_disc_tag':['', Validators.required],
      //these are constructed from the above JSON object
-     'contact':[null, Validators.required],
-     'disc_tag':[null, Validators.required],
-     
-     'doc_type_tag':[null, Validators.required],
-     'doc_number' :[null, Validators.required],
-     'revision' :[null, Validators.required],
-     'doc_name':[null, Validators.required],
-     'filename':[null, Validators.required],
-     'pathConstructor':[null, Validators.required],
-     'filepath':[null, Validators.required],
+     'contact':['', Validators.required],
+     'disc_tag':['', Validators.required],
+     'doc_type_tag':['', Validators.required],
+     'doc_number' :['', Validators.required],
+     'revision' :['', Validators.required],
+     'doc_name':['', Validators.required],
+     'filename':['', Validators.required],
+     'pathConstructor':['', Validators.required],
+     'filepath':['', Validators.required],
      
    });
     
 //A -- USE THIS OPTION TO OBSERVE SPECIFIC VALUES, eg if one is programatically generated and would create an infinite loop. OPERATORS MERGED TOGETHER, ONLY NEED TO WATCH ONE VAR
 //excludes the option selector contact_disc_tag  
 const fieldChanges = merge(
+    this.boardsForm.get('job_tag').valueChanges,  
     this.boardsForm.get('contact').valueChanges,
     this.boardsForm.get('disc_tag').valueChanges,
     this.boardsForm.get('doc_type_tag').valueChanges,
@@ -91,73 +94,55 @@ const fieldChanges = merge(
     this.boardsForm.get('doc_name').valueChanges,
   );
 
-  const contactDiscChanges = merge(
-    this.boardsForm.get('contact_disc_tag').valueChanges,
-  );
+//ACTIONS TO TAKE PLACE AS USER EDITS ANY FORM FIELD
+fieldChanges.subscribe(form => {
+  //console.log(this.boardsForm.value);  
+      
+  this.boardsForm.get('filename').setValue(
+    //GETS MULTIPLE VALUES FROM THIS OPTION SELECTOR WHICH ARE WRITTEN INTO JSON OBJECT
+    this.boardsForm.get('contact').value + '-' +
+    this.boardsForm.get('disc_tag').value + '-' +
+    this.boardsForm.get('doc_type_tag').value + '-' +
+    this.boardsForm.get('doc_number').value + '-' +
+    this.boardsForm.get('revision').value + '-' +
+    this.boardsForm.get('doc_name').value
   
-  //only get constrcotr tage whn this val changes
-  //this fills out other forms fields from JSON object at contact_disc_tag
-  contactDiscChanges.subscribe(form => {
-      sessionStorage.setItem('form', JSON.stringify(form));
-      this.boardsForm.get('contact').setValue(
-        JSON.parse(this.boardsForm.get('contact_disc_tag').value).contact
-      );
-        this.boardsForm.get('disc_tag').setValue(
-        JSON.parse(this.boardsForm.get('contact_disc_tag').value).disc_tag 
-      );
-        this.boardsForm.get('pathConstructor').setValue(
-        JSON.parse(this.boardsForm.get('contact_disc_tag').value).pathConstructor 
-      );
+  );
 
-      //var require: any;
-      // var template = require('url-template');
+  this.boardsForm.get('filepath').setValue(
+    this.con_filepath = this.fs.filePathCon(
+      this.boardsForm.get('pathConstructor').value,
+      this.boardsForm.value
+      )   
+  );
+      //code from https://github.com/bramstein/url-template?fbclid=IwAR3fXbXJ1K9ZwnXOBkrRMFwpdiGqjlm3NOfGRgSPALvRidwkqIW7TLGoJ48
+});
 
-      //BELOW CODE CALCULATES FILEPATH BUT CRASHES THE APP :(
-      console.log('form = ' + form);
-      var formdata = JSON.parse(form);
-      console.log('formdata=' +formdata);
-      var FCON1 = require('url-template').parse(this.boardsForm.get('pathConstructor').value );
-      var FCON2 = FCON1.expand(formdata);
-      // FOR DEBUGGING - working but need to fix require error
-      console.log("FCON1")
-      console.log("FCON2 = " + FCON2);
-      this.boardsForm.get('filepath').setValue(
-        FCON2 
-      );
- 
-  });
+const contactDiscChanges = merge(
+  this.boardsForm.get('contact_disc_tag').valueChanges,
+);
 
-  //ACTIONS TO TAKE PLACE AS USER EDITS ANY FORM FIELD
-  fieldChanges.subscribe(form => {
-    sessionStorage.setItem('form', JSON.stringify(form));
-    this.boardsForm.get('filename').setValue(
-      //GETS MULTIPLE VALUES FROM THIS OPTION SELECTOR WHICH ARE WRITTEN INTO JSON OBJECT
-      this.boardsForm.get('contact').value + '-' +
-      this.boardsForm.get('disc_tag').value + '-' +
-      this.boardsForm.get('doc_type_tag').value + '-' +
-      this.boardsForm.get('doc_number').value + '-' +
-      this.boardsForm.get('revision').value + '-' +
-      this.boardsForm.get('doc_name').value
+//only get constrcotr tage whn this val changes
+//this fills out other forms fields from JSON object at contact_disc_tag
+contactDiscChanges.subscribe(filepath => {
+  //console.log(this.boardsForm.value);
+
+  this.boardsForm.get('contact').setValue(
+      JSON.parse(this.boardsForm.get('contact_disc_tag').value).contact
     );
-
-    //1 2 and 3 have been moved to contactDiscChanges
-    //1
-    // this.boardsForm.get('contact').setValue(
-    //   JSON.parse(this.boardsForm.get('contact_disc_tag').value).contact
-    // );
-    //2
-    // this.boardsForm.get('disc_tag').setValue(
-    //   JSON.parse(this.boardsForm.get('contact_disc_tag').value).disc_tag 
-    // );
-    //3
-    // this.boardsForm.get('pathConstructor').setValue(
-    //   JSON.parse(this.boardsForm.get('contact_disc_tag').value).pathConstructor 
-    // );
+  this.boardsForm.get('disc_tag').setValue(
+      JSON.parse(this.boardsForm.get('contact_disc_tag').value).disc_tag 
+    );
+  this.boardsForm.get('pathConstructor').setValue(
+      JSON.parse(this.boardsForm.get('contact_disc_tag').value).pathConstructor 
+    );
     
-    //code from https://github.com/bramstein/url-template?fbclid=IwAR3fXbXJ1K9ZwnXOBkrRMFwpdiGqjlm3NOfGRgSPALvRidwkqIW7TLGoJ48
-    //var require: any;
-
-  });
+  var pathCon = this.boardsForm.get('pathConstructor').value;
+  var dataCon = this.boardsForm.value;
+  this.boardsForm.get('filepath').setValue(
+    this.con_filepath = this.fs.filePathCon(pathCon, dataCon) 
+    );        
+});
 
  };
 //B -- USE THIS OPTION TO OBSERVE ALL VALUES
@@ -187,6 +172,20 @@ const fieldChanges = merge(
          console.log(err);
        });
  }
+
+ GetData(form:NgForm) {
+
+  return form;
+
+  // this.fs.postDoc(collection,form)
+  //   .subscribe(res => {
+  //       let id = res['key'];
+  //       //this.router.navigate(['/boards-details', id]);
+  //     }, (err) => {
+  //       console.log(form);
+  //     });
+}
+
 
  deleteDoc(id) {
    this.fs.deleteDoc(collection,id)
