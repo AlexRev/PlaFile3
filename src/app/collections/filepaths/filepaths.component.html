@@ -1,6 +1,6 @@
 
 <h1>
-  CONTACTS
+  FILEPATHS
 </h1>
 
 <div>
@@ -12,39 +12,13 @@
         <span *ngIf="!boardsForm.get('name').valid && boardsForm.get('name').touched">Please enter Contact Name</span>
       </mat-error>
     </mat-form-field>
-
     <mat-form-field class="example-full-width">
-        <input matInput placeholder="tag" formControlName="tag"
+        <input matInput placeholder="pathConstructor" formControlName="pathConstructor"
         [errorStateMatcher]="matcher">
       <mat-error>
-        <span *ngIf="!boardsForm.get('tag').valid && boardsForm.get('tag').touched">Please enter Contact tag</span>
+        <span *ngIf="!boardsForm.get('pathConstructor').valid && boardsForm.get('pathConstructor').touched">Please enter a Path Constructor tag</span>
       </mat-error>
     </mat-form-field>
-
-
-
-
-    <mat-form-field class="example-full-width">
-    <mat-select formControlName="disc_tag" placeholder="Select Discipline">
-      <mat-option value="{{item.tag}}" class ="text" *ngFor = "let item of disc_items | async">{{item.name}}</mat-option>
-    </mat-select>
-  </mat-form-field>
-
-  <mat-form-field class="example-full-width">
-    <mat-select formControlName="pathConstructor" placeholder="Select pathConstructor">
-      <mat-option value="{{item.pathConstructor}}" class ="text" *ngFor = "let item of filepath_items | async">{{item.name}}</mat-option>
-    </mat-select>
-  </mat-form-field>
-
-  <!-- <mat-form-field class="example-full-width">
-    <input matInput placeholder="File Path Constructor xxx/{{xxx}}/..." formControlName="pathConstructor"
-    [errorStateMatcher]="matcher">
-  <mat-error>
-    <span *ngIf="!boardsForm.get('pathConstructor').valid && boardsForm.get('pathConstructor').touched">Please enter file path constructor</span>
-  </mat-error>
-  </mat-form-field>  -->
-
-
     <div class="button-row">
       <button type="submit" [disabled]="!boardsForm.valid" mat-fab color="primary"><mat-icon>save</mat-icon></button>
     </div>
@@ -73,20 +47,8 @@
       </ng-container>
   
       <!-- Author Column -->
-      <ng-container matColumnDef="tag">
+      <ng-container matColumnDef="filepaths">
         <th mat-header-cell *matHeaderCellDef> Tag </th>
-        <td mat-cell *matCellDef="let element"> {{element.tag}} </td>
-      </ng-container>
-
-      <!-- DISC COLUMNG -->
-      <ng-container matColumnDef="disc">
-        <th mat-header-cell *matHeaderCellDef> Discipline </th>
-        <td mat-cell *matCellDef="let element"> {{element.disc_tag}} </td>
-      </ng-container>
-
-      <!-- Path Constructor -->
-      <ng-container matColumnDef="pathConstructor">
-        <th mat-header-cell *matHeaderCellDef> Path Constructor </th>
         <td mat-cell *matCellDef="let element"> {{element.pathConstructor}} </td>
       </ng-container>
 
@@ -100,4 +62,4 @@
     </table>
   </div>
 
-
+  

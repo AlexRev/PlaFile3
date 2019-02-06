@@ -35,6 +35,7 @@ import {
 
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { JobsComponent } from './collections/jobs/jobs.component';
+import { FilepathsComponent } from './collections/filepaths/filepaths.component';
 
 @NgModule({
   declarations: [
@@ -45,7 +46,8 @@ import { JobsComponent } from './collections/jobs/jobs.component';
     DocTypeComponent,
     FileADocComponent,
     HomeComponent,
-    JobsComponent
+    JobsComponent,
+    FilepathsComponent
   ],
   imports: [
     BrowserModule,

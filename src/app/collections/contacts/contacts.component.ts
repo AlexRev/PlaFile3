@@ -26,6 +26,7 @@ export class ContactsComponent implements OnInit {
 
 //4. ADD OPTIONDATA
 disc_items: Observable<any[]>;
+filepath_items:  Observable<any[]>;
 //
 
 
@@ -40,6 +41,7 @@ disc_items: Observable<any[]>;
  constructor(db:AngularFirestore, private fs: FsService, private formBuilder: FormBuilder) {
   //GET OPTION DATA HERE  
   this.disc_items = db.collection('DISCIPLINES').valueChanges();
+  this.filepath_items = db.collection('FILEPATHS').valueChanges();
  }
 
  //5. get data from forms

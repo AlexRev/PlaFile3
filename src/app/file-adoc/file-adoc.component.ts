@@ -81,57 +81,81 @@ doc_type_items:Observable<any[]>;
    });
     
 //A -- USE THIS OPTION TO OBSERVE SPECIFIC VALUES, eg if one is programatically generated and would create an infinite loop. OPERATORS MERGED TOGETHER, ONLY NEED TO WATCH ONE VAR
-  const fieldChanges = merge(
-    this.boardsForm.get('contact_disc_tag').valueChanges,
+//excludes the option selector contact_disc_tag  
+const fieldChanges = merge(
+    this.boardsForm.get('contact').valueChanges,
+    this.boardsForm.get('disc_tag').valueChanges,
     this.boardsForm.get('doc_type_tag').valueChanges,
     this.boardsForm.get('doc_number').valueChanges,
     this.boardsForm.get('revision').valueChanges,
     this.boardsForm.get('doc_name').valueChanges,
   );
 
+  const contactDiscChanges = merge(
+    this.boardsForm.get('contact_disc_tag').valueChanges,
+  );
+  
+  //only get constrcotr tage whn this val changes
+  //this fills out other forms fields from JSON object at contact_disc_tag
+  contactDiscChanges.subscribe(form => {
+      sessionStorage.setItem('form', JSON.stringify(form));
+      this.boardsForm.get('contact').setValue(
+        JSON.parse(this.boardsForm.get('contact_disc_tag').value).contact
+      );
+        this.boardsForm.get('disc_tag').setValue(
+        JSON.parse(this.boardsForm.get('contact_disc_tag').value).disc_tag 
+      );
+        this.boardsForm.get('pathConstructor').setValue(
+        JSON.parse(this.boardsForm.get('contact_disc_tag').value).pathConstructor 
+      );
 
-  //ACTIONS TO TAKE PLACE AS USER EDITS FORM
+      //var require: any;
+      // var template = require('url-template');
+
+      //BELOW CODE CALCULATES FILEPATH BUT CRASHES THE APP :(
+      console.log('form = ' + form);
+      var formdata = JSON.parse(form);
+      console.log('formdata=' +formdata);
+      var FCON1 = require('url-template').parse(this.boardsForm.get('pathConstructor').value );
+      var FCON2 = FCON1.expand(formdata);
+      // FOR DEBUGGING - working but need to fix require error
+      console.log("FCON1")
+      console.log("FCON2 = " + FCON2);
+      this.boardsForm.get('filepath').setValue(
+        FCON2 
+      );
+ 
+  });
+
+  //ACTIONS TO TAKE PLACE AS USER EDITS ANY FORM FIELD
   fieldChanges.subscribe(form => {
     sessionStorage.setItem('form', JSON.stringify(form));
     this.boardsForm.get('filename').setValue(
       //GETS MULTIPLE VALUES FROM THIS OPTION SELECTOR WHICH ARE WRITTEN INTO JSON OBJECT
-      JSON.parse(this.boardsForm.get('contact_disc_tag').value).contact + '-' +
-      JSON.parse(this.boardsForm.get('contact_disc_tag').value).disc_tag + '-' +
+      this.boardsForm.get('contact').value + '-' +
+      this.boardsForm.get('disc_tag').value + '-' +
       this.boardsForm.get('doc_type_tag').value + '-' +
       this.boardsForm.get('doc_number').value + '-' +
       this.boardsForm.get('revision').value + '-' +
       this.boardsForm.get('doc_name').value
     );
-    
-    this.boardsForm.get('contact').setValue(
-      JSON.parse(this.boardsForm.get('contact_disc_tag').value).contact
-    );
 
-    this.boardsForm.get('disc_tag').setValue(
-      JSON.parse(this.boardsForm.get('contact_disc_tag').value).disc_tag 
-    );
-
-    this.boardsForm.get('pathConstructor').setValue(
-      JSON.parse(this.boardsForm.get('contact_disc_tag').value).pathConstructor 
-    );
+    //1 2 and 3 have been moved to contactDiscChanges
+    //1
+    // this.boardsForm.get('contact').setValue(
+    //   JSON.parse(this.boardsForm.get('contact_disc_tag').value).contact
+    // );
+    //2
+    // this.boardsForm.get('disc_tag').setValue(
+    //   JSON.parse(this.boardsForm.get('contact_disc_tag').value).disc_tag 
+    // );
+    //3
+    // this.boardsForm.get('pathConstructor').setValue(
+    //   JSON.parse(this.boardsForm.get('contact_disc_tag').value).pathConstructor 
+    // );
     
     //code from https://github.com/bramstein/url-template?fbclid=IwAR3fXbXJ1K9ZwnXOBkrRMFwpdiGqjlm3NOfGRgSPALvRidwkqIW7TLGoJ48
     //var require: any;
-    var template = require('url-template');
-
-    //BELOW CODE CALCULATES FILEPATH BUT CRASHES THE APP :(
-    console.log(form);
-    // var formdata = JSON.parse(form);
-    // console.log(formdata);
-    // var FCON1 = template.parse(this.boardsForm.get('pathConstructor').value );
-    // var FCON2 = FCON1.expand(formdata);
-    // // FOR DEBUGGING - working but need to fix require error
-    // console.log("FCON1")
-    // console.log("FCON2 = " + FCON2);
-    // this.boardsForm.get('filepath').setValue(
-    //   FCON2 
-    // );
-
 
   });
 

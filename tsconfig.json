@@ -2,7 +2,7 @@
   "compileOnSave": false,
   "compilerOptions": {
     //added for URL PASSER CODE SEE FILAADOC
-    "types":["node"],
+    "types":["node","jasmine"],
     "baseUrl": "./",
     "outDir": "./dist/out-tsc",
     "sourceMap": true,
@@ -20,5 +20,10 @@
       "es2018",
       "dom"
     ]
-  }
+  },
+  "include":[
+    "src/**/*.ts",
+    "node_modules/@types",
+  ]
+  
 }
