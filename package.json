@@ -1,13 +1,16 @@
 {
   "name": "pla-file3",
   "version": "0.0.0",
+  "main": "electron/dist/main.js",
   "scripts": {
+    "elec-tsc" : "ng build --base-href ./ && tsc --p electron && electron .",
+    "electron": "ng build --base-href ./ && tsc --p electron && electron .",
     "ng": "ng",
     "start": "ng serve",
     "build": "ng build",
     "test": "ng test",
     "lint": "ng lint",
-    "e2e": "ng e2e"
+    "e2e": "ng e2e"    
   },
   "private": true,
   "dependencies": {
@@ -29,17 +32,20 @@
     "rxjs": "~6.3.3",
     "tslib": "^1.9.0",
     "url-template": "^2.0.8",
-    "zone.js": "~0.8.26"
+    "zone.js": "~0.8.26",
+    "@types/node": "^7.0.5"
   },
   "devDependencies": {
     "@angular-devkit/build-angular": "~0.13.0",
     "@angular/cli": "~7.3.0",
     "@angular/compiler-cli": "~7.2.0",
     "@angular/language-service": "~7.2.0",
+    "@types/electron": "^1.6.10",
     "@types/jasmine": "^2.8.16",
     "@types/jasminewd2": "~2.0.3",
     "@types/node": "^8.10.39",
     "codelyzer": "~4.5.0",
+    "electron": "^4.0.4",
     "jasmine-core": "~2.99.1",
     "jasmine-spec-reporter": "~4.2.1",
     "karma": "~3.1.1",
