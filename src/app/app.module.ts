@@ -37,6 +37,15 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { JobsComponent } from './collections/jobs/jobs.component';
 import { FilepathsComponent } from './collections/filepaths/filepaths.component';
 
+//ngx imports
+// import { BrowserModule } from '@angular/platform-browser';
+// import { NgModule } from '@angular/core';
+// import { FormsModule } from '@angular/forms';
+import { HttpClientModule } from '@angular/common/http';
+ 
+// import { AppComponent } from './app.component';
+import { FileDropModule } from 'ngx-file-drop';
+
 @NgModule({
   declarations: [
     AppComponent,
@@ -70,6 +79,9 @@ import { FilepathsComponent } from './collections/filepaths/filepaths.component'
     AngularFirestoreModule,
     AngularFireStorageModule,
     AngularFireAuthModule,
+    //ngx imports
+    HttpClientModule,
+    FileDropModule
   ],
   providers: [
   ],

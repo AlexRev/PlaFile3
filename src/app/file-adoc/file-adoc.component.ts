@@ -1,4 +1,5 @@
 // TODO HERE
+//Wiered bug where filepthar constructorfalls a step behind when coded another way
 
 import { Component, OnInit,  } from '@angular/core';
 import { DataSource } from '@angular/cdk/collections';
@@ -7,6 +8,10 @@ import { FormBuilder, FormGroup, NgForm, Validators } from '@angular/forms';
 import { Observable, merge } from 'rxjs';
 import * as firebase from 'firebase';
 import { AngularFirestore } from '@angular/fire/firestore';
+import { FileService } from '../file.service';
+
+//ngx code
+import { UploadEvent, UploadFile, FileSystemFileEntry, FileSystemDirectoryEntry } from 'ngx-file-drop';
 
 //UPDATE IN 3 PlACES FOR NEW COLLECTION
 
@@ -50,7 +55,7 @@ doc_type_items:Observable<any[]>;
  //constructor vars:
  con_filepath: any;
  
- constructor(db:AngularFirestore, private fs: FsService, private formBuilder: FormBuilder) {
+ constructor(private fileService: FileService, db:AngularFirestore, private fs: FsService, private formBuilder: FormBuilder) {
   //GET OPTION DATA HERE  
   this.job_items = db.collection('JOBS').valueChanges();
   this.contact_disc_items = db.collection('CONTACTS').valueChanges();
@@ -63,7 +68,8 @@ doc_type_items:Observable<any[]>;
 
  //5. get data from forms
  ngOnInit() {
-   this.boardsForm = this.formBuilder.group({
+  
+  this.boardsForm = this.formBuilder.group({
     //  'name' : [null, Validators.required],
     //  'tag' : [null, Validators.required],
     //  'disc_tag' : [null, Validators.required],
@@ -97,25 +103,33 @@ const fieldChanges = merge(
 //ACTIONS TO TAKE PLACE AS USER EDITS ANY FORM FIELD
 fieldChanges.subscribe(form => {
   //console.log(this.boardsForm.value);  
-      
-  this.boardsForm.get('filename').setValue(
-    //GETS MULTIPLE VALUES FROM THIS OPTION SELECTOR WHICH ARE WRITTEN INTO JSON OBJECT
-    this.boardsForm.get('contact').value + '-' +
-    this.boardsForm.get('disc_tag').value + '-' +
-    this.boardsForm.get('doc_type_tag').value + '-' +
-    this.boardsForm.get('doc_number').value + '-' +
-    this.boardsForm.get('revision').value + '-' +
-    this.boardsForm.get('doc_name').value
   
-  );
+  var filename_str =  
+  this.boardsForm.get('contact').value + '-' +
+  this.boardsForm.get('disc_tag').value + '-' +
+  this.boardsForm.get('doc_type_tag').value + '-' +
+  this.boardsForm.get('doc_number').value + '-' +
+  this.boardsForm.get('revision').value + '-' +
+  this.boardsForm.get('doc_name').value
+  ;
 
+  this.boardsForm.get('filename').setValue(filename_str);
+
+  //1 Get filepath template
+  var pathCon = this.boardsForm.get('pathConstructor').value;
+  //2 Get File Path Data
+  var dataCon = this.boardsForm.value;
+  //3 create new var to store contructed filepath, and send 1 and 2 to Fs service to glue toghet.
+ 
+    //GETS MULTIPLE VALUES FROM THIS OPTION SELECTOR WHICH ARE WRITTEN INTO JSON OBJECT
+  
   this.boardsForm.get('filepath').setValue(
-    this.con_filepath = this.fs.filePathCon(
-      this.boardsForm.get('pathConstructor').value,
-      this.boardsForm.value
-      )   
-  );
-      //code from https://github.com/bramstein/url-template?fbclid=IwAR3fXbXJ1K9ZwnXOBkrRMFwpdiGqjlm3NOfGRgSPALvRidwkqIW7TLGoJ48
+    this.con_filepath = this.fs.filePathCon(pathCon, dataCon)
+      );
+   
+   //code from https://github.com/bramstein/url-template?fbclid=IwAR3fXbXJ1K9ZwnXOBkrRMFwpdiGqjlm3NOfGRgSPALvRidwkqIW7TLGoJ48
+      
+
 });
 
 const contactDiscChanges = merge(
@@ -139,9 +153,11 @@ contactDiscChanges.subscribe(filepath => {
     
   var pathCon = this.boardsForm.get('pathConstructor').value;
   var dataCon = this.boardsForm.value;
+
   this.boardsForm.get('filepath').setValue(
-    this.con_filepath = this.fs.filePathCon(pathCon, dataCon) 
-    );        
+    this.con_filepath = this.fs.filePathCon(pathCon, dataCon)
+    ); 
+            
 });
 
  };
@@ -171,6 +187,15 @@ contactDiscChanges.subscribe(filepath => {
        }, (err) => {
          console.log(err);
        });
+
+       var ipcOBJ :object;
+        ipcOBJ =     { 
+        filename : this.boardsForm.get('filename').value , 
+        filepath : this.con_filepath,
+        filehome: this.fileDesk,
+      }
+
+       this.fileService.getFiles(ipcOBJ).then(console.log);
  }
 
  GetData(form:NgForm) {
@@ -196,6 +221,60 @@ contactDiscChanges.subscribe(filepath => {
        }
      );
  }
+
+
+ //ngx code
+
+ public fileDesk: string;
+ public files: UploadFile[];
+ 
+  public dropped(event: UploadEvent) {
+    this.files = event.files;
+    for (const droppedFile of event.files) {
+ 
+      // Is it a file?
+      if (droppedFile.fileEntry.isFile) {
+        const fileEntry = droppedFile.fileEntry as FileSystemFileEntry;
+        
+        fileEntry.file((file: File) => {
+          
+          this.fileDesk = file.path;
+          // Here you can access the real file
+          console.log("see data if worked", droppedFile.relativePath, file.path);
+ 
+          /**
+          // You could upload it like this:
+          const formData = new FormData()
+          formData.append('logo', file, relativePath)
+ 
+          // Headers
+          const headers = new HttpHeaders({
+            'security-token': 'mytoken'
+          })
+ 
+          this.http.post('https://mybackend.com/api/upload/sanitize-and-save-logo', formData, { headers: headers, responseType: 'blob' })
+          .subscribe(data => {
+            // Sanitized logo returned from backend
+          })
+          **/
+ 
+        });
+      } else {
+        // It was a directory (empty directories are added, otherwise only files)
+        const fileEntry = droppedFile.fileEntry as FileSystemDirectoryEntry;
+        console.log(droppedFile.relativePath, fileEntry);
+      }
+    }
+  }
+ 
+  public fileOver(event){
+    console.log(event);
+  }
+ 
+  public fileLeave(event){
+    console.log(event);
+  }
+
 
 }
 
@@ -236,8 +315,10 @@ export class BoardDataSource extends DataSource<any> {
  }
 
  connect() {
-   console.log(collection);
+  //  console.log(collection);
    return this.getDocs();
+   
+
  }
 
  disconnect() {

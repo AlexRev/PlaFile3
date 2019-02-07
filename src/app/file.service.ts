@@ -19,12 +19,12 @@ export class FileService {
     }
   }
 
-  async getFiles() {
+  async getFiles(arg) {
     return new Promise<string[]>((resolve, reject) => {
       this.ipc.once("getFilesResponse", (event, arg) => {
         resolve(arg);
       });
-      this.ipc.send("getFiles");
+      this.ipc.send("getFiles",arg);
     });
   }
 
