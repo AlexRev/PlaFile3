@@ -141,6 +141,7 @@ const contactDiscChanges = merge(
 contactDiscChanges.subscribe(filepath => {
   //console.log(this.boardsForm.value);
 
+  console.log(this.boardsForm.get('contact_disc_tag').value);
   this.boardsForm.get('contact').setValue(
       JSON.parse(this.boardsForm.get('contact_disc_tag').value).contact
     );

@@ -40,7 +40,7 @@ electron_1.ipcMain.on("getFiles", function (event, arg) {
     // console.log(arg);
     var n_filename = arg["filename"];
     console.log('filename = ' + n_filename);
-    var path_in = 'C:/Users/Al/Desktop' + arg["filepath"].replace("///", "/\/");
+    var path_in = 'C:/Users/AlexRevay/Desktop' + arg["filepath"].replace("///", "/\/");
     var n_filepath = path_in;
     console.log('filepath = ' + n_filepath);
     var filehome = arg["filehome"];
@@ -56,7 +56,7 @@ electron_1.ipcMain.on("getFiles", function (event, arg) {
     });
     var srcpath = filehome;
     console.log(srcpath);
-    var dstpath = n_filepath + n_filename + filetype;
+    var dstpath = n_filepath + n_filename + '.' + filetype;
     console.log(dstpath);
     // With a callback:
     fse.move(srcpath, dstpath, function (err) {

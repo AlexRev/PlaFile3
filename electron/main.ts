@@ -53,11 +53,10 @@ function createWindow() {
 
 ipcMain.on("getFiles", (event, arg:object) => {
   // console.log(arg);
-
   var n_filename = arg["filename"];
-  console.log('filename = ' + n_filename);
+  console.log('filename = ' + n_filename); 
 
-  var path_in = 'C:/Users/Al/Desktop' + arg["filepath"].replace("///","/\/");
+  var path_in = 'C:/Users/AlexRevay/Desktop' + arg["filepath"].replace("///","/\/");
   var n_filepath = path_in;
   console.log('filepath = ' + n_filepath);
   
@@ -81,7 +80,7 @@ ipcMain.on("getFiles", (event, arg:object) => {
 
   var srcpath = filehome;
   console.log(srcpath);
-  var dstpath = n_filepath + n_filename+filetype;
+  var dstpath = n_filepath + n_filename+'.'+filetype;
   console.log(dstpath);
 
   // With a callback:
