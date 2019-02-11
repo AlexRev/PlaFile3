@@ -26,7 +26,7 @@ const collection = "DOCUMENTS"
 export class FileADocComponent implements OnInit {
 
  //2. UPDATE DISPLAYED COLUMNS HERE
- displayedColumns = ['job_tag' , 'contact' ,'disc_tag', 'doc_type_tag' , 'doc_number', 'revision', 'doc_name', 'filename', 'del'];
+ displayedColumns = ['job_tag' , 'contact' ,'disc_tag','disc_folder_tag','doc_type_tag' , 'doc_number', 'revision', 'doc_name', 'filename', 'del'];
   
  dataSource = new BoardDataSource(this.fs);
 
@@ -57,9 +57,9 @@ doc_type_items:Observable<any[]>;
  
  constructor(private fileService: FileService, db:AngularFirestore, private fs: FsService, private formBuilder: FormBuilder) {
   //GET OPTION DATA HERE  
-  this.job_items = db.collection('JOBS').valueChanges();
-  this.contact_disc_items = db.collection('CONTACTS').valueChanges();
-  this.doc_type_items = db.collection('DOC_TYPES').valueChanges();
+  this.job_items = db.collection('JOBS', ref => ref.orderBy('name')).valueChanges();
+  this.contact_disc_items = db.collection('CONTACTS', ref => ref.orderBy('name')).valueChanges();
+  this.doc_type_items = db.collection('DOC_TYPES', ref => ref.orderBy('name')).valueChanges();
   //below N/A as writes from this table
   // this.doc_number_items :db.collection('DISCIPLINES').valueChanges();
   // this.revision_items :db.collection('DISCIPLINES').valueChanges();
@@ -78,6 +78,7 @@ doc_type_items:Observable<any[]>;
      //these are constructed from the above JSON object
      'contact':['', Validators.required],
      'disc_tag':['', Validators.required],
+     'disc_folder_tag' :['', Validators.required],
      'doc_type_tag':['', Validators.required],
      'doc_number' :['', Validators.required],
      'revision' :['', Validators.required],
@@ -148,12 +149,17 @@ contactDiscChanges.subscribe(filepath => {
   this.boardsForm.get('disc_tag').setValue(
       JSON.parse(this.boardsForm.get('contact_disc_tag').value).disc_tag 
     );
+  this.boardsForm.get('disc_folder_tag').setValue(
+    JSON.parse(this.boardsForm.get('contact_disc_tag').value).disc_folder_tag 
+  );
   this.boardsForm.get('pathConstructor').setValue(
-      JSON.parse(this.boardsForm.get('contact_disc_tag').value).pathConstructor 
+    JSON.parse(this.boardsForm.get('contact_disc_tag').value).pathConstructor 
     );
     
   var pathCon = this.boardsForm.get('pathConstructor').value;
   var dataCon = this.boardsForm.value;
+
+  console.log(this.boardsForm.value);
 
   this.boardsForm.get('filepath').setValue(
     this.con_filepath = this.fs.filePathCon(pathCon, dataCon)
@@ -301,6 +307,7 @@ export class BoardDataSource extends DataSource<any> {
            key: doc.id,
            contact:data.contact,
            disc_tag: data.disc_tag,
+           disc_folder_tag: data.disc_folder_tag,
            job_tag: data.job_tag,
            contact_disc_tag: data.contact_disc_tag,
            doc_type_tag:data.doc_type_tag,

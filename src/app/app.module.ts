@@ -83,6 +83,7 @@ import { FileDropModule } from 'ngx-file-drop';
     HttpClientModule,
     FileDropModule
   ],
+  exports:[MatSortModule],
   providers: [
   ],
   bootstrap: [AppComponent]
