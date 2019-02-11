@@ -26,7 +26,7 @@ const collection = "DOCUMENTS"
 export class FileADocComponent implements OnInit {
 
  //2. UPDATE DISPLAYED COLUMNS HERE
- displayedColumns = ['job_tag' , 'contact' ,'disc_tag','disc_folder_tag','doc_type_tag' , 'doc_number', 'revision', 'doc_name', 'filename', 'del'];
+ displayedColumns = ['job_tag' , 'contact','contact_tag' ,'disc_tag','disc_folder_tag','doc_type_tag' , 'doc_number', 'revision', 'doc_name', 'filename', 'del'];
   
  dataSource = new BoardDataSource(this.fs);
 
@@ -45,6 +45,7 @@ doc_type_items:Observable<any[]>;
 
 //Below are variables used to write tabular display of data
  job_tag:string='';
+ contact:string='';
  contact_tag:string='';
  doc_type_tag:string='';
  doc_number :string='';
@@ -77,6 +78,7 @@ doc_type_items:Observable<any[]>;
      'contact_disc_tag':['', Validators.required],
      //these are constructed from the above JSON object
      'contact':['', Validators.required],
+     'contact_tag':['', Validators.required],
      'disc_tag':['', Validators.required],
      'disc_folder_tag' :['', Validators.required],
      'doc_type_tag':['', Validators.required],
@@ -106,7 +108,7 @@ fieldChanges.subscribe(form => {
   //console.log(this.boardsForm.value);  
   
   var filename_str =  
-  this.boardsForm.get('contact').value + '-' +
+  this.boardsForm.get('contact_tag').value + '-' +
   this.boardsForm.get('disc_tag').value + '-' +
   this.boardsForm.get('doc_type_tag').value + '-' +
   this.boardsForm.get('doc_number').value + '-' +
@@ -125,7 +127,7 @@ fieldChanges.subscribe(form => {
     //GETS MULTIPLE VALUES FROM THIS OPTION SELECTOR WHICH ARE WRITTEN INTO JSON OBJECT
   
   this.boardsForm.get('filepath').setValue(
-    this.con_filepath = this.fs.filePathCon(pathCon, dataCon)
+    this.con_filepath = 'P:'+ this.fs.filePathCon(pathCon, dataCon)
       );
    
    //code from https://github.com/bramstein/url-template?fbclid=IwAR3fXbXJ1K9ZwnXOBkrRMFwpdiGqjlm3NOfGRgSPALvRidwkqIW7TLGoJ48
@@ -146,6 +148,9 @@ contactDiscChanges.subscribe(filepath => {
   this.boardsForm.get('contact').setValue(
       JSON.parse(this.boardsForm.get('contact_disc_tag').value).contact
     );
+  this.boardsForm.get('contact_tag').setValue(
+    JSON.parse(this.boardsForm.get('contact_disc_tag').value).contact_tag
+  );
   this.boardsForm.get('disc_tag').setValue(
       JSON.parse(this.boardsForm.get('contact_disc_tag').value).disc_tag 
     );
@@ -306,6 +311,7 @@ export class BoardDataSource extends DataSource<any> {
          boards.push({
            key: doc.id,
            contact:data.contact,
+           contact_tag:data.contact_tag,
            disc_tag: data.disc_tag,
            disc_folder_tag: data.disc_folder_tag,
            job_tag: data.job_tag,

@@ -56,7 +56,7 @@ ipcMain.on("getFiles", (event, arg:object) => {
   var n_filename = arg["filename"];
   console.log('filename = ' + n_filename); 
 
-  var path_in = 'P:/' + arg["filepath"].replace("///","/\/");
+  var path_in = arg["filepath"].replace("///","/\/");
   var n_filepath = path_in;
   console.log('filepath = ' + n_filepath);
   
