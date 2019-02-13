@@ -4,7 +4,7 @@
 import { Component, OnInit,  } from '@angular/core';
 import { DataSource } from '@angular/cdk/collections';
 import { FsService } from '../fs.service';
-import { FormBuilder, FormGroup, NgForm, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, NgForm, Validators, EmailValidator } from '@angular/forms';
 import { Observable, merge } from 'rxjs';
 import * as firebase from 'firebase';
 import { AngularFirestore } from '@angular/fire/firestore';
@@ -18,12 +18,17 @@ import { UploadEvent, UploadFile, FileSystemFileEntry, FileSystemDirectoryEntry 
 //1 . update collection and fields here
 const collection = "DOCUMENTS"
 
+//for the checkbox
+
+
 @Component({
   selector: 'app-contacts',
   templateUrl: './file-adoc.component.html',
   styleUrls: ['./file-adoc.component.css']
 })
 export class FileADocComponent implements OnInit {
+
+
 
  //2. UPDATE DISPLAYED COLUMNS HERE
  displayedColumns = ['job_tag' , 'contact','contact_tag' ,'disc_tag','disc_folder_tag','doc_type_tag' , 'doc_number', 'revision', 'doc_name', 'filename', 'del'];
@@ -78,6 +83,7 @@ doc_type_items:Observable<any[]>;
      'contact_disc_tag':['', Validators.required],
      //these are constructed from the above JSON object
      'contact':['', Validators.required],
+     'to_contact':['', Validators.required],
      'contact_tag':['', Validators.required],
      'disc_tag':['', Validators.required],
      'disc_folder_tag' :['', Validators.required],
@@ -88,6 +94,7 @@ doc_type_items:Observable<any[]>;
      'filename':['', Validators.required],
      'pathConstructor':['', Validators.required],
      'filepath':['', Validators.required],
+     
      
    });
     
@@ -101,14 +108,23 @@ const fieldChanges = merge(
     this.boardsForm.get('doc_number').valueChanges,
     this.boardsForm.get('revision').valueChanges,
     this.boardsForm.get('doc_name').valueChanges,
+    this.boardsForm.get('to_contact').valueChanges,
   );
 
 //ACTIONS TO TAKE PLACE AS USER EDITS ANY FORM FIELD
 fieldChanges.subscribe(form => {
   //console.log(this.boardsForm.value);  
-  
+  var from_str:string;
+
+  if (this.boardsForm.get('to_contact').value==true) {
+    from_str = "PLA" ;
+    //console.log('PLA');
+  } else {
+    from_str = this.boardsForm.get('contact_tag').value;
+  };
+
   var filename_str =  
-  this.boardsForm.get('contact_tag').value + '-' +
+  from_str + '-'+
   this.boardsForm.get('disc_tag').value + '-' +
   this.boardsForm.get('doc_type_tag').value + '-' +
   this.boardsForm.get('doc_number').value + '-' +
@@ -127,7 +143,7 @@ fieldChanges.subscribe(form => {
     //GETS MULTIPLE VALUES FROM THIS OPTION SELECTOR WHICH ARE WRITTEN INTO JSON OBJECT
   
   this.boardsForm.get('filepath').setValue(
-    this.con_filepath = 'P:'+ this.fs.filePathCon(pathCon, dataCon)
+    this.con_filepath = (this.fs.filePathCon(pathCon, dataCon))
       );
    
    //code from https://github.com/bramstein/url-template?fbclid=IwAR3fXbXJ1K9ZwnXOBkrRMFwpdiGqjlm3NOfGRgSPALvRidwkqIW7TLGoJ48

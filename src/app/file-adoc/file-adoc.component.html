@@ -40,12 +40,18 @@
         <mat-select formControlName="contact_disc_tag" placeholder="Select CONTACT">
             <mat-option value='{
               "contact":"{{item.name}}", 
-              "contact_tag":"{{item.disc_tag}}",
+              "contact_tag":"{{item.tag}}",
               "disc_tag":"{{item.disc_tag}}",
               "disc_folder_tag":"{{item.disc_folder_tag}}",  
               "pathConstructor":"{{item.pathConstructor}}"
               }' class ="text" *ngFor = "let item of contact_disc_items | async">{{item.name}}</mat-option>
           </mat-select>
+        </mat-form-field>
+        <!-- CHECKBOX FOR TO -->
+        <mat-form-field floatPlaceholder="always" class="mat-form-field--no-underline">
+          <!-- the matInput with display:none makes the magic. It's ugly, I've warned you -->
+          <input matInput placeholder= '' style="display: none" >
+          <mat-checkbox [(ngModel)]="isChecked" formControlName = 'to_contact'>To this contact?</mat-checkbox>
         </mat-form-field>
         <!-- DOC-TYPE -->
         <mat-form-field class="example-full-width">

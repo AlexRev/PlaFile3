@@ -34,7 +34,7 @@ export class FsService {
     });
   }
 
-  filePathCon(template_string, data): Observable<{}> {
+  filePathCon(template_string, data): string {
     
     //1 LOAD STRING TO URL-TEMPALTE CODE
     var load_string = require('url-template').parse(template_string);

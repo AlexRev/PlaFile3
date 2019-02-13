@@ -7,6 +7,7 @@ import { FileADocComponent } from './file-adoc/file-adoc.component';
 import { HomeComponent } from './collections/home/home.component';
 import { JobsComponent } from './collections/jobs/jobs.component';
 import { FilepathsComponent } from './collections/filepaths/filepaths.component';
+import { HostsComponent } from './collections/hosts/hosts.component';
 
 const routes: Routes = [
   {path:'contacts', component: ContactsComponent},
@@ -16,6 +17,7 @@ const routes: Routes = [
   {path: 'chome', component: HomeComponent},
   {path: 'jobs', component: JobsComponent},
   {path: 'filepaths', component:FilepathsComponent},
+  {path: 'hosts', component:HostsComponent},
   {path: '', redirectTo: 'home', pathMatch: 'full'}
 ];
 

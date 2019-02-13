@@ -31,7 +31,8 @@ import {
   MatCardModule,
   MatFormFieldModule,
   MatSelectModule, 
-  MatSelect} from "@angular/material";
+  MatSelect,
+  MatCheckboxModule} from "@angular/material";
 
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { JobsComponent } from './collections/jobs/jobs.component';
@@ -45,6 +46,7 @@ import { HttpClientModule } from '@angular/common/http';
  
 // import { AppComponent } from './app.component';
 import { FileDropModule } from 'ngx-file-drop';
+import { HostsComponent } from './collections/hosts/hosts.component';
 
 @NgModule({
   declarations: [
@@ -56,7 +58,8 @@ import { FileDropModule } from 'ngx-file-drop';
     FileADocComponent,
     HomeComponent,
     JobsComponent,
-    FilepathsComponent
+    FilepathsComponent,
+    HostsComponent
   ],
   imports: [
     BrowserModule,
@@ -74,6 +77,7 @@ import { FileDropModule } from 'ngx-file-drop';
     MatCardModule,
     MatFormFieldModule,
     MatSelectModule,
+    MatCheckboxModule,
     //imports from PLA-FILE
     AngularFireModule.initializeApp(AppConfig.firebase,'pla-firebase'),
     AngularFirestoreModule,
