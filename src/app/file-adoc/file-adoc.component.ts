@@ -6,8 +6,9 @@ import { DataSource } from '@angular/cdk/collections';
 import { FsService } from '../fs.service';
 import { FormBuilder, FormGroup, NgForm, Validators, EmailValidator } from '@angular/forms';
 import { Observable, merge } from 'rxjs';
+import { map } from 'rxjs/operators';
 import * as firebase from 'firebase';
-import { AngularFirestore } from '@angular/fire/firestore';
+import { AngularFirestore, AngularFirestoreCollection } from '@angular/fire/firestore';
 import { FileService } from '../file.service';
 
 //ngx code
@@ -40,6 +41,7 @@ disc_items: Observable<any[]>;
 job_items:Observable<any[]>;
 contact_disc_items:Observable<any[]>;
 doc_type_items:Observable<any[]>;
+host_items:Observable<any[]>;
 // //N/A not options
 // doc_number_items :Observable<any[]>;
 // revision_items :Observable<any[]>;
@@ -61,11 +63,12 @@ doc_type_items:Observable<any[]>;
  //constructor vars:
  con_filepath: any;
  
- constructor(private fileService: FileService, db:AngularFirestore, private fs: FsService, private formBuilder: FormBuilder) {
+ constructor(private fileService: FileService, db:AngularFirestore, private fs: FsService, private formBuilder: FormBuilder, private ipc:FileService, private db2:AngularFirestore) {
   //GET OPTION DATA HERE  
   this.job_items = db.collection('JOBS', ref => ref.orderBy('name')).valueChanges();
   this.contact_disc_items = db.collection('CONTACTS', ref => ref.orderBy('name')).valueChanges();
   this.doc_type_items = db.collection('DOC_TYPES', ref => ref.orderBy('name')).valueChanges();
+  this.host_items = db.collection('HOSTS', ref => ref.orderBy('host_name')).valueChanges();
   //below N/A as writes from this table
   // this.doc_number_items :db.collection('DISCIPLINES').valueChanges();
   // this.revision_items :db.collection('DISCIPLINES').valueChanges();
@@ -74,6 +77,25 @@ doc_type_items:Observable<any[]>;
 
  //5. get data from forms
  ngOnInit() {
+
+  this.ipc.send('getHost', 'renderer host requested');
+  this.ipc.on('getHost', (event, arg) => {
+    console.log(arg)
+    this.boardsForm.get('current_host').setValue(arg);
+    console.log(this.boardsForm.value);
+  
+  var hostRef = this.db2.collection('HOSTS')
+  console.log(hostRef);
+  //   'host_name','==',arg
+  //   )).get();
+  // hostRef.subscribe(val => console.log(val));
+  // console.log(hostRef);
+  
+
+  });
+    
+     // prints "pong"
+  
   
   this.boardsForm = this.formBuilder.group({
     //  'name' : [null, Validators.required],
@@ -94,8 +116,8 @@ doc_type_items:Observable<any[]>;
      'filename':['', Validators.required],
      'pathConstructor':['', Validators.required],
      'filepath':['', Validators.required],
-     
-     
+     'current_host':['', Validators.required],
+          
    });
     
 //A -- USE THIS OPTION TO OBSERVE SPECIFIC VALUES, eg if one is programatically generated and would create an infinite loop. OPERATORS MERGED TOGETHER, ONLY NEED TO WATCH ONE VAR

@@ -4,6 +4,7 @@ import { FsService } from '../../fs.service';
 import { FormControl, FormGroupDirective, FormBuilder, FormGroup, NgForm, Validators } from '@angular/forms';
 import { Observable } from 'rxjs';
 import * as firebase from 'firebase';
+import { FileService } from 'src/app/file.service';
 
 //UPDATE IN 3 PlACES FOR NEW COLLECTION
 
@@ -26,11 +27,11 @@ export class HostsComponent implements OnInit {
  boardsForm: FormGroup;
  host_name:string='';
  host_path:string='';
- 
- 
- 
- constructor(private fs: FsService, private formBuilder: FormBuilder) {
- }
+ current_host:string='';
+
+ constructor(private fs: FsService, private formBuilder: FormBuilder, private ipc:FileService) {
+
+  }
 
  ngOnInit() {
    this.boardsForm = this.formBuilder.group({
@@ -38,6 +39,16 @@ export class HostsComponent implements OnInit {
      'host_path' : [null, Validators.required],
    });
    
+   console.log(window.location.hostname);
+   
+   this.ipc.on('getHost', (event, arg) => {
+    console.log(arg)
+    this.boardsForm.get('host_name').setValue(arg);
+    console.log(this.boardsForm.value);
+    // prints "pong"
+    })
+    this.ipc.send('getHost', 'renderer host requested')
+
  }
 
  onFormSubmit(form:NgForm) {

@@ -1,12 +1,14 @@
 
-import { app, BrowserWindow, ipcMain } from "electron";
+import { app, BrowserWindow, ipcMain, ipcRenderer, } from "electron";
 import * as fs from 'fs';
+
 
 var fse = require('fs-extra');
 
 //const { app, BrowserWindow } = require("electron");
 const path = require("path");
 const url = require("url");
+const host = require("os");
 
 let win;
 
@@ -46,7 +48,8 @@ function createWindow() {
     win = null;
   });
 
-
+  console.log(host.hostname());
+  
 }
 
 //IPC_CODE https://stackoverflow.com/questions/11922383/access-process-nested-objects-arrays-or-json
@@ -92,15 +95,24 @@ ipcMain.on("getFiles", (event, arg:object) => {
  
 
 
-
 });
 
 ipcMain.on("getFiles", (event, arg) => {
   const files = fs.readdirSync(__dirname);
   win.webContents.send("getFilesResponse", arg);
   
+});
 
 
+ipcMain.on('getHost', (event, arg) => {
+  console.log(arg) // prints "ping"
+  event.sender.send('getHost', host.hostname())
+});
+
+
+ipcMain.on('getHost', (event, arg) => {
+  console.log(arg) // prints "ping"
+  event.returnValue = 'pong'
 });
 
 

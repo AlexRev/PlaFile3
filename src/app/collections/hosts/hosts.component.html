@@ -6,17 +6,17 @@
   <div>
     <form [formGroup]="boardsForm" (ngSubmit)="onFormSubmit(boardsForm.value)">
       <mat-form-field class="example-full-width">
-        <input matInput placeholder="name" formControlName="name"
+        <input matInput placeholder="host_name" formControlName="host_name"
                 [errorStateMatcher]="matcher">
         <mat-error>
-          <span *ngIf="!boardsForm.get('name').valid && boardsForm.get('name').touched">Please enter Contact Name</span>
+          <span *ngIf="!boardsForm.get('host_name').valid && boardsForm.get('host_name').touched">Please enter Contact Name</span>
         </mat-error>
       </mat-form-field>
       <mat-form-field class="example-full-width">
-          <input matInput placeholder="tag" formControlName="tag"
+          <input matInput placeholder="tag" formControlName="host_path"
           [errorStateMatcher]="matcher">
         <mat-error>
-          <span *ngIf="!boardsForm.get('tag').valid && boardsForm.get('tag').touched">Please enter Contact tag</span>
+          <span *ngIf="!boardsForm.get('host_path').valid && boardsForm.get('host_path').touched">Please enter Contact tag</span>
         </mat-error>
       </mat-form-field>
       <div class="button-row">
@@ -41,14 +41,14 @@
         </ng-container>
     
         <!-- Description Column -->
-        <ng-container matColumnDef="name">
+        <ng-container matColumnDef="host_name">
           <th mat-header-cell *matHeaderCellDef > Name </th>
           <td mat-cell *matCellDef="let element"> {{element.host_name}} </td>
         </ng-container>
     
         <!-- Author Column -->
-        <ng-container matColumnDef="tag">
-          <th mat-header-cell *matHeaderCellDef> Tag </th>
+        <ng-container matColumnDef="host_path">
+          <th mat-header-cell *matHeaderCellDef> Path </th>
           <td mat-cell *matCellDef="let element"> {{element.host_path}} </td>
         </ng-container>
   

@@ -6,6 +6,7 @@ var fse = require('fs-extra');
 //const { app, BrowserWindow } = require("electron");
 var path = require("path");
 var url = require("url");
+var host = require("os");
 var win;
 electron_1.app.on("ready", createWindow);
 // initialize the app's main window
@@ -34,6 +35,7 @@ function createWindow() {
     win.on("closed", function () {
         win = null;
     });
+    console.log(host.hostname());
 }
 //IPC_CODE https://stackoverflow.com/questions/11922383/access-process-nested-objects-arrays-or-json
 electron_1.ipcMain.on("getFiles", function (event, arg) {
@@ -68,5 +70,13 @@ electron_1.ipcMain.on("getFiles", function (event, arg) {
 electron_1.ipcMain.on("getFiles", function (event, arg) {
     var files = fs.readdirSync(__dirname);
     win.webContents.send("getFilesResponse", arg);
+});
+electron_1.ipcMain.on('getHost', function (event, arg) {
+    console.log(arg); // prints "ping"
+    event.sender.send('getHost', host.hostname());
+});
+electron_1.ipcMain.on('getHost', function (event, arg) {
+    console.log(arg); // prints "ping"
+    event.returnValue = 'pong';
 });
 //# sourceMappingURL=main.js.map
