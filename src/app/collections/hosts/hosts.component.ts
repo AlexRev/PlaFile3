@@ -38,10 +38,8 @@ export class HostsComponent implements OnInit {
      'host_name' : [null, Validators.required],
      'host_path' : [null, Validators.required],
    });
-   
-   console.log(window.location.hostname);
-   
-   this.ipc.on('getHost', (event, arg) => {
+
+    this.ipc.on('getHost', (event, arg) => {
     console.log(arg)
     this.boardsForm.get('host_name').setValue(arg);
     console.log(this.boardsForm.value);

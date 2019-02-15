@@ -27,7 +27,12 @@
  
   <div>
     <form [formGroup]="boardsForm" (ngSubmit)="onFormSubmit(boardsForm.value)">
-        
+          <!-- USER -->
+          <mat-form-field class="example-full-width">
+            <mat-select formControlName="host_path" placeholder="Select USER">
+                <mat-option value="{{item.host_path}}" class ="text" *ngFor = "let item of host_items | async">{{item.host_name}}</mat-option>
+              </mat-select>
+            </mat-form-field>
 
         <!-- //JOB -->
         <mat-form-field class="example-full-width">
@@ -51,8 +56,23 @@
         <mat-form-field floatPlaceholder="always" class="mat-form-field--no-underline">
           <!-- the matInput with display:none makes the magic. It's ugly, I've warned you -->
           <input matInput placeholder= '' style="display: none" >
-          <mat-checkbox [(ngModel)]="isChecked" formControlName = 'to_contact'>To this contact?</mat-checkbox>
+          <mat-checkbox #to formControlName = 'to_contact_check'>To this contact?</mat-checkbox>
         </mat-form-field>
+        
+        <!-- TO CONTACT DETAILS -->
+        <mat-form-field class="example-full-width">
+          <mat-select formControlName="to_contact_disc_tag" placeholder="Select TO CONTACT"  >
+              <mat-option value='{
+                "to_contact":"{{item.name}}", 
+                "to_contact_tag":"{{item.tag}}",
+                "to_contact_disc_tag":"{{item.disc_tag}}",
+                "to_contact_disc_folder_tag":"{{item.disc_folder_tag}}",  
+                "to_contact_pathConstructor":"{{item.pathConstructor}}"
+                }' class ="text" *ngFor = "let item of contact_disc_items | async">{{item.name}}</mat-option>
+            </mat-select>
+          </mat-form-field>
+
+
         <!-- DOC-TYPE -->
         <mat-form-field class="example-full-width">
         <mat-select formControlName="doc_type_tag" placeholder="Select DOC_TYPE">

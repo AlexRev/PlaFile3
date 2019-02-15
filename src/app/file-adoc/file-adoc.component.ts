@@ -13,6 +13,8 @@ import { FileService } from '../file.service';
 
 //ngx code
 import { UploadEvent, UploadFile, FileSystemFileEntry, FileSystemDirectoryEntry } from 'ngx-file-drop';
+import { pbkdf2 } from 'crypto';
+import { FilepathsComponent } from '../collections/filepaths/filepaths.component';
 
 //UPDATE IN 3 PlACES FOR NEW COLLECTION
 
@@ -68,7 +70,7 @@ host_items:Observable<any[]>;
   this.job_items = db.collection('JOBS', ref => ref.orderBy('name')).valueChanges();
   this.contact_disc_items = db.collection('CONTACTS', ref => ref.orderBy('name')).valueChanges();
   this.doc_type_items = db.collection('DOC_TYPES', ref => ref.orderBy('name')).valueChanges();
-  this.host_items = db.collection('HOSTS', ref => ref.orderBy('host_name')).valueChanges();
+  this.host_items = db.collection('HOSTS').valueChanges();
   //below N/A as writes from this table
   // this.doc_number_items :db.collection('DISCIPLINES').valueChanges();
   // this.revision_items :db.collection('DISCIPLINES').valueChanges();
@@ -78,14 +80,19 @@ host_items:Observable<any[]>;
  //5. get data from forms
  ngOnInit() {
 
+
+
   this.ipc.send('getHost', 'renderer host requested');
   this.ipc.on('getHost', (event, arg) => {
     console.log(arg)
-    this.boardsForm.get('current_host').setValue(arg);
-    console.log(this.boardsForm.value);
+  //   this.boardsForm.get('current_host').setValue(arg);
+  //   console.log(this.boardsForm.value);
   
-  var hostRef = this.db2.collection('HOSTS')
-  console.log(hostRef);
+  // var hostRef = this.db2.collection('HOSTS')
+  // console.log(hostRef);
+
+
+  
   //   'host_name','==',arg
   //   )).get();
   // hostRef.subscribe(val => console.log(val));
@@ -103,20 +110,32 @@ host_items:Observable<any[]>;
     //  'disc_tag' : [null, Validators.required],
      'job_tag':['', Validators.required],
      'contact_disc_tag':['', Validators.required],
+     'to_contact_disc_tag':['', Validators.required],
      //these are constructed from the above JSON object
      'contact':['', Validators.required],
-     'to_contact':['', Validators.required],
      'contact_tag':['', Validators.required],
      'disc_tag':['', Validators.required],
      'disc_folder_tag' :['', Validators.required],
+     'pathConstructor':['', Validators.required],
+
+     'to_contact_check':['', Validators.required],
+     'to_contact':['', Validators.required],
+     'to_contact_tag':['', Validators.required],
+     'to_disc_tag':['', Validators.required],
+     'to_contact_disc_folder_tag':['', Validators.required],
+     'to_contact_pathConstructor':['', Validators.required],
+
      'doc_type_tag':['', Validators.required],
      'doc_number' :['', Validators.required],
      'revision' :['', Validators.required],
      'doc_name':['', Validators.required],
      'filename':['', Validators.required],
-     'pathConstructor':['', Validators.required],
+     
      'filepath':['', Validators.required],
      'current_host':['', Validators.required],
+     'host_path':['', Validators.required],
+
+     'checkt':['display: none', Validators.required],
           
    });
     
@@ -131,58 +150,39 @@ const fieldChanges = merge(
     this.boardsForm.get('revision').valueChanges,
     this.boardsForm.get('doc_name').valueChanges,
     this.boardsForm.get('to_contact').valueChanges,
+    this.boardsForm.get('to_contact_check').valueChanges,
   );
 
 //ACTIONS TO TAKE PLACE AS USER EDITS ANY FORM FIELD
 fieldChanges.subscribe(form => {
   //console.log(this.boardsForm.value);  
-  var from_str:string;
-
-  if (this.boardsForm.get('to_contact').value==true) {
-    from_str = "PLA" ;
-    //console.log('PLA');
-  } else {
-    from_str = this.boardsForm.get('contact_tag').value;
-  };
-
-  var filename_str =  
-  from_str + '-'+
-  this.boardsForm.get('disc_tag').value + '-' +
-  this.boardsForm.get('doc_type_tag').value + '-' +
-  this.boardsForm.get('doc_number').value + '-' +
-  this.boardsForm.get('revision').value + '-' +
-  this.boardsForm.get('doc_name').value
-  ;
-
-  this.boardsForm.get('filename').setValue(filename_str);
-
+  
+  this.buildFileName();
+  this.buildFilePath();
+  
   //1 Get filepath template
-  var pathCon = this.boardsForm.get('pathConstructor').value;
+  // var pathCon = this.boardsForm.get('pathConstructor').value;
   //2 Get File Path Data
-  var dataCon = this.boardsForm.value;
+  // var dataCon = this.boardsForm.value;
   //3 create new var to store contructed filepath, and send 1 and 2 to Fs service to glue toghet.
  
     //GETS MULTIPLE VALUES FROM THIS OPTION SELECTOR WHICH ARE WRITTEN INTO JSON OBJECT
   
-  this.boardsForm.get('filepath').setValue(
-    this.con_filepath = (this.fs.filePathCon(pathCon, dataCon))
-      );
+  // this.boardsForm.get('filepath').setValue(
+  //   this.con_filepath = (this.fs.filePathCon(pathCon, dataCon))
+  //     );
    
    //code from https://github.com/bramstein/url-template?fbclid=IwAR3fXbXJ1K9ZwnXOBkrRMFwpdiGqjlm3NOfGRgSPALvRidwkqIW7TLGoJ48
-      
-
 });
 
+
+// 1 Contact DROP DOWN UPDATE EVENTS
 const contactDiscChanges = merge(
   this.boardsForm.get('contact_disc_tag').valueChanges,
-);
-
-//only get constrcotr tage whn this val changes
-//this fills out other forms fields from JSON object at contact_disc_tag
-contactDiscChanges.subscribe(filepath => {
+  ).subscribe(filepath => {
   //console.log(this.boardsForm.value);
 
-  console.log(this.boardsForm.get('contact_disc_tag').value);
+  console.log('contact_disc_tag',this.boardsForm.get('contact_disc_tag').value);
   this.boardsForm.get('contact').setValue(
       JSON.parse(this.boardsForm.get('contact_disc_tag').value).contact
     );
@@ -202,13 +202,48 @@ contactDiscChanges.subscribe(filepath => {
   var pathCon = this.boardsForm.get('pathConstructor').value;
   var dataCon = this.boardsForm.value;
 
-  console.log(this.boardsForm.value);
+  
 
-  this.boardsForm.get('filepath').setValue(
-    this.con_filepath = this.fs.filePathCon(pathCon, dataCon)
-    ); 
-            
+  this.buildFileName();
+  this.buildFilePath();
+  console.log('form_values',this.boardsForm.value);
+
+  // this.boardsForm.get('filepath').setValue(
+  // this.con_filepath = this.fs.filePathCon(pathCon, dataCon)
+  // );       
 });
+
+// 2 To Contact DROP DOWN UPDATE EVENTS
+
+const to_contactDiscChanges = merge(
+  this.boardsForm.get('to_contact_disc_tag').valueChanges,
+  ).subscribe(something =>{
+
+  console.log('to_contact_disc_tag', this.boardsForm.get('to_contact_disc_tag').value);
+  
+  this.boardsForm.get('to_contact').setValue(
+      JSON.parse(this.boardsForm.get('to_contact_disc_tag').value).to_contact
+    );
+  this.boardsForm.get('to_contact_tag').setValue(
+    JSON.parse(this.boardsForm.get('to_contact_disc_tag').value).to_contact_tag
+    );
+
+  this.boardsForm.get('to_disc_tag').setValue(
+      JSON.parse(this.boardsForm.get('to_contact_disc_tag').value).to_contact_disc_tag 
+    );
+  this.boardsForm.get('to_contact_disc_folder_tag').setValue(
+    JSON.parse(this.boardsForm.get('to_contact_disc_tag').value).to_contact_disc_folder_tag 
+    );
+  this.boardsForm.get('to_contact_pathConstructor').setValue(
+    JSON.parse(this.boardsForm.get('to_contact_disc_tag').value).to_contact_pathConstructor 
+    );
+  
+    this.buildFileName();
+    this.buildFilePath();
+    console.log('form_values',this.boardsForm.value);
+  
+})
+
 
  };
 //B -- USE THIS OPTION TO OBSERVE ALL VALUES
@@ -241,7 +276,7 @@ contactDiscChanges.subscribe(filepath => {
        var ipcOBJ :object;
         ipcOBJ =     { 
         filename : this.boardsForm.get('filename').value , 
-        filepath : this.con_filepath,
+        filepath : this.boardsForm.get('filepath').value,
         filehome: this.fileDesk,
       }
 
@@ -326,7 +361,80 @@ contactDiscChanges.subscribe(filepath => {
   }
 
 
+  public buildFileName(){
+    
+    console.log(this.boardsForm.value)
+
+    var filename_str =  
+    this.boardsForm.get('contact_tag').value + '-'+
+    this.boardsForm.get('disc_tag').value + '-' +
+    this.boardsForm.get('doc_type_tag').value + '-' +
+    this.boardsForm.get('doc_number').value + '-' +
+    this.boardsForm.get('revision').value + '-' +
+    this.boardsForm.get('doc_name').value
+    ;
+
+    console.log('filename_str',filename_str);
+    this.boardsForm.get('filename').setValue(filename_str);
+    
+  }
+
+  public buildFilePath(){
+
+    var filePathCon:string;
+    var filePathData:any;
+
+    if(this.boardsForm.get('to_contact_check').value==true) {
+
+      filePathData={
+        'job_tag':this.boardsForm.get("job_tag").value,
+        'contact_disc_tag':this.boardsForm.get("contact_disc_tag").value,
+        'to_contact_disc_tag':this.boardsForm.get("to_contact_disc_tag").value,
+        //these are constructed from the above JSON object
+        'contact':this.boardsForm.get("to_contact").value,
+        'contact_tag':this.boardsForm.get("to_contact_tag").value,
+        'disc_tag':this.boardsForm.get("to_disc_tag").value,
+        'disc_folder_tag' :this.boardsForm.get("to_contact_disc_folder_tag").value,
+        'pathConstructor':this.boardsForm.get("to_contact_pathConstructor").value,
+    
+        'doc_type_tag':this.boardsForm.get("job_tag").value,
+        'doc_number' :this.boardsForm.get("job_tag").value,
+        'revision' :this.boardsForm.get("job_tag").value,
+        'doc_name':this.boardsForm.get("job_tag").value,
+        'filename':this.boardsForm.get("job_tag").value,
+        
+        'filepath':this.boardsForm.get("job_tag").value,
+        'current_host':this.boardsForm.get("job_tag").value,
+        }
+      
+      filePathCon = this.boardsForm.get("to_contact_pathConstructor").value
+
+    } else {
+    
+      filePathData = this.boardsForm.value
+      filePathCon = this.boardsForm.get("pathConstructor").value
+    }
+
+    var con_filepath = this.fs.filePathCon(
+      filePathCon,
+      filePathData
+       )
+
+    var con_filepath_folder = con_filepath.replace(/%20/g," ");
+    
+    var hostdir = this.boardsForm.get("host_path").value;
+    
+
+    console.log('filepath',hostdir + con_filepath_folder);
+
+
+    this.boardsForm.get('filepath').setValue(hostdir + con_filepath_folder);
+
 }
+
+}
+
+
 
 export class BoardDataSource extends DataSource<any> {
 
