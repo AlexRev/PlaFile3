@@ -1,30 +1,30 @@
-import { Injectable } from "@angular/core";
-import { IpcRenderer } from "electron";
+import { Injectable } from '@angular/core';
+import { IpcRenderer } from 'electron';
 
 @Injectable({
-  providedIn: "root"
+  providedIn: 'root'
 })
 export class FileService {
   public ipc: IpcRenderer;
 
   constructor() {
-    if ((<any>window).require) {
+    if ((window as any).require) {
       try {
-        this.ipc = (<any>window).require("electron").ipcRenderer;
+        this.ipc = (window as any).require('electron').ipcRenderer;
       } catch (error) {
         throw error;
       }
     } else {
-      console.warn("Could not load electron ipc");
+      console.warn('Could not load electron ipc');
     }
   }
 
   async getFiles(arg) {
     return new Promise<string[]>((resolve, reject) => {
-      this.ipc.once("getFilesResponse", (event, arg) => {
+      this.ipc.once('getFilesResponse', (event, arg) => {
         resolve(arg);
       });
-      this.ipc.send("getFiles",arg);
+      this.ipc.send('getFiles', arg);
     });
   }
 
@@ -42,7 +42,7 @@ export class FileService {
     this.ipc.send(channel, ...args);
   }
 
- 
+
 }
 
 

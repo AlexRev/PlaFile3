@@ -11,9 +11,9 @@ import { FileADocComponent } from './file-adoc/file-adoc.component';
 import { HomeComponent } from './collections/home/home.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
-//imports from PLA-FILE
+// imports from PLA-FILE
 import { AngularFireModule } from '@angular/fire';
-import { AppConfig } from './app.component'
+import { AppConfig } from './app.component';
 
 import { AngularFirestoreModule } from '@angular/fire/firestore';
 import { AngularFireStorageModule } from '@angular/fire/storage';
@@ -30,20 +30,21 @@ import {
   MatButtonModule,
   MatCardModule,
   MatFormFieldModule,
-  MatSelectModule, 
+  MatSelectModule,
   MatSelect,
-  MatCheckboxModule} from "@angular/material";
+  MatCheckboxModule,
+  MatToolbarModule} from '@angular/material';
 
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { JobsComponent } from './collections/jobs/jobs.component';
 import { FilepathsComponent } from './collections/filepaths/filepaths.component';
 
-//ngx imports
+// ngx imports
 // import { BrowserModule } from '@angular/platform-browser';
 // import { NgModule } from '@angular/core';
 // import { FormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
- 
+
 // import { AppComponent } from './app.component';
 import { FileDropModule } from 'ngx-file-drop';
 import { HostsComponent } from './collections/hosts/hosts.component';
@@ -67,6 +68,7 @@ import { HostsComponent } from './collections/hosts/hosts.component';
     BrowserAnimationsModule,
     FormsModule,
     ReactiveFormsModule,
+    MatToolbarModule,
     MatInputModule,
     MatTableModule,
     MatPaginatorModule,
@@ -78,16 +80,16 @@ import { HostsComponent } from './collections/hosts/hosts.component';
     MatFormFieldModule,
     MatSelectModule,
     MatCheckboxModule,
-    //imports from PLA-FILE
-    AngularFireModule.initializeApp(AppConfig.firebase,'pla-firebase'),
+    // imports from PLA-FILE
+    AngularFireModule.initializeApp(AppConfig.firebase, 'pla-firebase'),
     AngularFirestoreModule,
     AngularFireStorageModule,
     AngularFireAuthModule,
-    //ngx imports
+    // ngx imports
     HttpClientModule,
     FileDropModule
   ],
-  exports:[MatSortModule],
+  exports: [MatSortModule],
   providers: [
   ],
   bootstrap: [AppComponent]

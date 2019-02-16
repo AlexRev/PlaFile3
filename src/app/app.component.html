@@ -1,13 +1,10 @@
-<h1>
-    Welcome to Platino Filing App
-</h1>
 <nav>
-    <a routerLink = "/home" routerLinkActive = "active" >File a New Doc</a>
-</nav>
-<nav>
-    <a routerLink = "/chome">
-        Edit Collections
-    </a>
+    <mat-toolbar color="primary">
+        Platino Filer
+        <a mat-button routerLink="/chome"> Edit Collections</a>
+        <div style="flex: 1"></div>
+        <a mat-raised-button routerLink="/home" routerLinkActive="active">File a New Doc</a>
+    </mat-toolbar>
 </nav>
 
 <router-outlet></router-outlet>

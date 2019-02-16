@@ -2,27 +2,27 @@ import { Component, NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { AppRoutingModule } from './app-routing.module';
 import * as firebase from 'firebase';
-//import firestore from 'firebase/firestore';
+// import firestore from 'firebase/firestore';
 
 const config = {
-  apiKey: "AIzaSyDNwo0J-JI5ApQ3lM3XoSm7eRp3ZMQ9W0E",
-  authDomain: "filer-183a7.firebaseapp.com",
-  databaseURL: "https://filer-183a7.firebaseio.com",
-  projectId: "filer-183a7",
-  storageBucket: "filer-183a7.appspot.com",
-  messagingSenderId: "110090761741"
+  apiKey: 'AIzaSyDNwo0J-JI5ApQ3lM3XoSm7eRp3ZMQ9W0E',
+  authDomain: 'filer-183a7.firebaseapp.com',
+  databaseURL: 'https://filer-183a7.firebaseio.com',
+  projectId: 'filer-183a7',
+  storageBucket: 'filer-183a7.appspot.com',
+  messagingSenderId: '110090761741'
   };
 
 export const AppConfig = {
   production: false,
   environment: 'LOCAL',
   firebase: {
-    apiKey: "AIzaSyDNwo0J-JI5ApQ3lM3XoSm7eRp3ZMQ9W0E",
-    authDomain: "filer-183a7.firebaseapp.com",
-    databaseURL: "https://filer-183a7.firebaseio.com",
-    projectId: "filer-183a7",
-    storageBucket: "filer-183a7.appspot.com",
-    messagingSenderId: "110090761741"
+    apiKey: 'AIzaSyDNwo0J-JI5ApQ3lM3XoSm7eRp3ZMQ9W0E',
+    authDomain: 'filer-183a7.firebaseapp.com',
+    databaseURL: 'https://filer-183a7.firebaseio.com',
+    projectId: 'filer-183a7',
+    storageBucket: 'filer-183a7.appspot.com',
+    messagingSenderId: '110090761741'
   }
 };
 
@@ -43,12 +43,12 @@ export const AppConfig = {
 
 export class AppComponent {
   title = 'plaFile3';
-  //PLA-FILEMOD
+  // PLA-FILEMOD
   config = config;
-    
+
   ngOnInit() {
     firebase.initializeApp(config);
-    //firebase.firestore().settings(settings);
+    // firebase.firestore().settings(settings);
   }
 }
 
