@@ -135,7 +135,7 @@ host_items:Observable<any[]>;
      'current_host':['', Validators.required],
      'host_path':['', Validators.required],
 
-     'checkt':['display: none', Validators.required],
+     'checkt':['false', Validators.required],
           
    });
     
@@ -152,6 +152,12 @@ const fieldChanges = merge(
     this.boardsForm.get('to_contact').valueChanges,
     this.boardsForm.get('to_contact_check').valueChanges,
   );
+
+
+  // if(this.boardsForm.get('to_contact_check').value==true) {
+  //   this.Eleme
+  // }
+
 
 //ACTIONS TO TAKE PLACE AS USER EDITS ANY FORM FIELD
 fieldChanges.subscribe(form => {
@@ -217,7 +223,7 @@ const contactDiscChanges = merge(
 
 const to_contactDiscChanges = merge(
   this.boardsForm.get('to_contact_disc_tag').valueChanges,
-  ).subscribe(something =>{
+  ).subscribe(do_something =>{
 
   console.log('to_contact_disc_tag', this.boardsForm.get('to_contact_disc_tag').value);
   

@@ -51,10 +51,11 @@
           <mat-form-field floatPlaceholder="always" class="mat-form-field--no-underline">
             <!-- the matInput with display:none makes the magic. It's ugly, I've warned you -->
             <input matInput placeholder= '' style="display: none" >
-            <mat-checkbox #to formControlName = 'to_contact_check'>To this contact?</mat-checkbox>
+            <mat-checkbox #to formControlName = 'to_contact_check'>Outgoing Correspondance?</mat-checkbox>
           </mat-form-field>
           
           <!-- TO CONTACT DETAILS -->
+          <div [hidden]='!boardsForm.controls.to_contact_check.value'>
           <mat-form-field class="example-full-width">
             <mat-select formControlName="to_contact_disc_tag" placeholder="Select TO CONTACT"  >
                 <mat-option value='{
@@ -66,6 +67,7 @@
                   }' class ="text" *ngFor = "let item of contact_disc_items | async">{{item.name}}</mat-option>
               </mat-select>
             </mat-form-field>
+          </div>
 
 
           <!-- DOC-TYPE -->
