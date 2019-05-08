@@ -431,7 +431,7 @@ const to_contactDiscChanges = merge(
     var hostdir = this.boardsForm.get("host_path").value;
     
 
-    console.log('filepath',hostdir + con_filepath_folder);
+    console.log('filepath',"C:/Users/"+ hostdir + "/Platino Properties/Platino - Current Jobs" + con_filepath_folder);
 
 
     this.boardsForm.get('filepath').setValue(hostdir + con_filepath_folder);

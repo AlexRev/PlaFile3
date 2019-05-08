@@ -36,6 +36,7 @@ function createWindow() {
         win = null;
     });
     console.log(host.hostname());
+    console.log(host.userInfo().username);
 }
 //IPC_CODE https://stackoverflow.com/questions/11922383/access-process-nested-objects-arrays-or-json
 electron_1.ipcMain.on("getFiles", function (event, arg) {
@@ -73,7 +74,7 @@ electron_1.ipcMain.on("getFiles", function (event, arg) {
 });
 electron_1.ipcMain.on('getHost', function (event, arg) {
     console.log(arg); // prints "ping"
-    event.sender.send('getHost', host.hostname());
+    event.sender.send('getHost', host.userInfo().username);
 });
 electron_1.ipcMain.on('getHost', function (event, arg) {
     console.log(arg); // prints "ping"

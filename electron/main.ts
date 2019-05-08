@@ -48,7 +48,8 @@ function createWindow() {
     win = null;
   });
 
-  console.log(host.hostname());
+  console.log(host.hostname())
+  console.log(host.userInfo().username);
   
 }
 
@@ -106,7 +107,7 @@ ipcMain.on("getFiles", (event, arg) => {
 
 ipcMain.on('getHost', (event, arg) => {
   console.log(arg) // prints "ping"
-  event.sender.send('getHost', host.hostname())
+  event.sender.send('getHost', host.userInfo().username)
 });
 
 
